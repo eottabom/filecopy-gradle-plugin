@@ -17,27 +17,6 @@ Build pipelines often require duplicating or renaming files — such as creating
 
 ---
 
-## Installation
-
-Add the repository and credentials to `settings.gradle.kts`:
-
-```kotlin
-pluginManagement {
-    repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/eottabom/filecopy-gradle-plugin")
-            credentials {
-                username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
-                password = providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
-            }
-        }
-        gradlePluginPortal()
-    }
-}
-```
-
----
-
 ## Usage
 
 ### Kotlin DSL (`build.gradle.kts`)
