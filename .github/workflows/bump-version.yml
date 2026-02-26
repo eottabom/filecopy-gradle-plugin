@@ -132,3 +132,35 @@ jobs:
             echo "$TAGS_TO_DELETE" | xargs -I {} git tag -d {}
             echo "$TAGS_TO_DELETE" | xargs -I {} git push origin :refs/tags/{}
           fi
+
+  publish:
+    needs: version
+    if: ${{ !contains(toJson(github.event.commits), '[skip ci]') && !contains(toJson(github.event.commits), '[ci skip]') }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
